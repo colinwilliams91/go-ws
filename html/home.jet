@@ -14,4 +14,19 @@
 <body>
 <h1>Hello from my Go Web Server!</h1>
 </body>
+
+<script>
+    let socket = null;
+
+    document.addEventListener("DOMContentLoaded", function(){
+        // TODO: ws -> wss for secured in PROD
+        socket = new WebSocket("ws://127.0.0.1:8080/ws");
+
+        socket.onopen = () => {
+            console.log("Successfully connected to websocket");
+        }
+    });
+
+</script>
+
 </html>
