@@ -31,6 +31,7 @@ var upgradeConnection = websocket.Upgrader{
 --	===================	--
 */
 
+// Home renders the home page view
 func Home(w http.ResponseWriter, r *http.Request) {
 	err := renderPage(w, "home.jet", nil)
 	if err != nil {
@@ -38,12 +39,14 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// WsJSONResponse defines the response sent back from websocket
 type WsJSONResponse struct {
 	Action 		string `json:"action"`
 	Message 	string `json:"message"`
 	MessageType string `json:"message_type"`
 }
 
+// WsEndpoint upgrades connection to websocket
 func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgradeConnection.Upgrade(w, r, nil)
 	if err != nil {
