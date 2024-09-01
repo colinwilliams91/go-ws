@@ -5,12 +5,30 @@ import (
 	"net/http"
 
 	"github.com/CloudyKit/jet/v6"
+	"github.com/gorilla/websocket"
 )
+
+/*
+--	===================	--
+--	--	server vars		--
+--	===================	--
+*/
 
 var views = jet.NewSet(
 	jet.NewOSFileSystemLoader("./html"),
 	jet.InDevelopmentMode(),
 )
+
+var upgradeConnection = websocket.Upgrader{
+	ReadBufferSize: 1024,
+	WriteBufferSize: 1024,
+}
+
+/*
+--	===================	--
+--	--	server 	funcs	--
+--	===================	--
+*/
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	err := renderPage(w, "home.jet", nil)
