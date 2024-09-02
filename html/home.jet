@@ -85,6 +85,19 @@
         socket.onopen = () => {
             console.log("Successfully connected to websocket");
         }
+
+        socket.onclose = () => {
+            console.log("websocket connection closed");
+        }
+
+        socket.onerror = (err) => {
+            console.error(`there was an error over websocket: ${socket.url}`);
+        }
+
+        socket.onmessage = (msg) => {
+            // msg should be JSON from the server...
+            console.log(msg);
+        }
     });
 
 </script>
