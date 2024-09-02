@@ -14,6 +14,10 @@ import (
 --	===================	--
 */
 
+var wsChan = make(chan WsJSONPayload)
+
+var clients = make(map[WebSocketConnection]string)
+
 var views = jet.NewSet(
 	jet.NewOSFileSystemLoader("./html"),
 	jet.InDevelopmentMode(),
@@ -34,6 +38,7 @@ var upgradeConnection = websocket.Upgrader{
 // Home renders the home page view
 func Home(w http.ResponseWriter, r *http.Request) {
 	err := renderPage(w, "home.jet", nil)
+
 	if err != nil {
 		log.Println(err)
 	}
@@ -68,6 +73,9 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	var response WsJSONResponse
 	response.Message = `<em><small>Connected to server</small></em>`
+
+	conn := WebSocketConnection{Conn: ws}
+	clients[conn] = ""
 
 	err = ws.WriteJSON(response)
 	if err != nil {
