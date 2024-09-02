@@ -20,8 +20,16 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
         crossorigin="anonymous"
         >
+    <style>
+        .chatbox {
+            outline: 1px solid silver;
+            min-height: 160px;
+            padding: 0.5em;
+        }
+    </style>
 </head>
 <body>
+
     <div class="container-xl">
         <div class="row">
             <div class="col">
@@ -42,12 +50,22 @@
                     <label for="message">Message:</label>
                     <input type="text" name="message" id="message" class="form-control" autocomplete="off">
                 </div>
+
+                <input type="hidden" name="action" id="action">
+
+                <hr>
+
+                <div id="output" class="chatbox">
+
+                </div>
+
             </div>
             <div class="col-md-4">
                 <h3>Who's Online</h3>
             </div>
         </div>
     </div>
+
 </body>
 
 <script
