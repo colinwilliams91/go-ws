@@ -65,6 +65,7 @@ type WsJSONPayload struct {
 
 // WsEndpoint upgrades connection to websocket
 func WsEndpoint(w http.ResponseWriter, r *http.Request) {
+	// establishes initial websocket (ws) connection by upgrading from http
 	ws, err := upgradeConnection.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -73,12 +74,14 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 	log.Println("Client connected to endpoint")
 
 	var response WsJSONResponse
+	response.Action = "Init"
 	response.Message = `<em><small>Connected to server</small></em>`
 
 	conn := WebSocketConnection{Conn: ws}
 	// adds client ws connection to "clients" Map
 	clients[conn] = ""
 
+	// writes/sends JSON "connected to server" response to client...
 	err = ws.WriteJSON(response)
 	if err != nil {
 		log.Println(err)
