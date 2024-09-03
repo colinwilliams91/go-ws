@@ -76,6 +76,7 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 	response.Message = `<em><small>Connected to server</small></em>`
 
 	conn := WebSocketConnection{Conn: ws}
+	// adds client ws connection to "clients" Map
 	clients[conn] = ""
 
 	err = ws.WriteJSON(response)
@@ -83,6 +84,7 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
+	// starts infinite/self-healing goroutine for anything sent over established client-ws
 	go ListenForWs(&conn)
 }
 
@@ -96,7 +98,7 @@ func ListenForWs(conn *WebSocketConnection) {
 
 	var payload WsJSONPayload
 
-	// shorthand for infinite for-loop
+	// shorthand for infinite loop (anytime we get a request with a payload (JSON Post or JSON file from JS client))
 	for {
 		err := conn.ReadJSON(&payload)
 
@@ -104,6 +106,7 @@ func ListenForWs(conn *WebSocketConnection) {
 			// do nothing
 		} else {
 			payload.Conn = *conn
+			// pass request payload (JSON) to our channel
 			wsChan <- payload
 		}
 	}
@@ -123,9 +126,12 @@ func ListenToWsChannel() {
 
 func broadcastToAll(response WsJSONResponse) {
 
+	// for each client...
 	for client := range clients {
+		// write JSON response to client over ws... ?
 		err := client.WriteJSON(response)
 
+		// if no client or client err (means client left) close client-ws
 		if err != nil {
 			log.Println("websocket err")
 			_ = client.Close()
