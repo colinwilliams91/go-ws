@@ -74,7 +74,7 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 	log.Println("Client connected to endpoint")
 
 	var response WsJSONResponse
-	response.Action = "Init"
+	response.Action = "init"
 	response.Message = `<em><small>Connected to server</small></em>`
 
 	conn := WebSocketConnection{Conn: ws}
@@ -120,10 +120,19 @@ func ListenToWsChannel() {
 	var response WsJSONResponse
 
 	for {
+		// wsChan (channel) has been updated with payload data...
 		event := <- wsChan
+
+		// dynamically handled data from client actions...
+		switch event.Action {
+		case "username":
+			// get a list of all users and send it back via broadcast
+		}
 
 		response.Action = "Got to WsChannel Listener"
 		response.Message = fmt.Sprintf("Arbitrary msg where action was: %s", event.Action)
+
+		// respond...
 		broadcastToAll(response)
 	}
 }

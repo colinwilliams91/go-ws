@@ -77,9 +77,11 @@
 
 <script>
     let socket = null;
+    // TODO: ws -> wss for secured in PROD
 
+    // on DOM-load event listeners...
     document.addEventListener("DOMContentLoaded", function(){
-        // TODO: ws -> wss for secured in PROD
+        /* SOCKETS */
         socket = new WebSocket("ws://127.0.0.1:8080/ws");
 
         socket.onopen = () => {
@@ -100,6 +102,17 @@
             const j = JSON.parse(msg.data);
             console.log(j);
         }
+
+        /* HTML */
+        let userInput = document.getElementById("username");
+        userInput.addEventListener("change", () => {
+            // map JSON obj to 'WsPayload' DTO type for backend...
+            let jsonData = {
+                action: "username",
+                username: this.value
+            }
+            socket.send(JSON.stringify(jsonData));
+        });
     });
 
 </script>
