@@ -91,8 +91,9 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 func ListenForWs(conn *WebSocketConnection) {
 
 	defer func() {
-		if err := recover(); err != nil {
-			log.Println("Error", fmt.Sprintf("%v", err))
+		// r == "recover" interface syntax
+		if r := recover(); r != nil {
+			log.Println("Error", fmt.Sprintf("%v", r))
 		}
 	}()
 
