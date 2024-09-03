@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -81,6 +82,57 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
+
+	go ListenForWs(&conn)
+}
+
+func ListenForWs(conn *WebSocketConnection) {
+
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("Error", fmt.Sprintf("%v", err))
+		}
+	}()
+
+	var payload WsJSONPayload
+
+	// shorthand for infinite for-loop
+	for {
+		err := conn.ReadJSON(&payload)
+
+		if err != nil {
+			// do nothing
+		} else {
+			payload.Conn = *conn
+			wsChan <- payload
+		}
+	}
+}
+
+func ListenToWsChannel() {
+	var response WsJSONResponse
+
+	for {
+		event := <- wsChan
+
+		response.Action = "Got to WsChannel Listener"
+		response.Message = fmt.Sprintf("Arbitrary msg where action was: %s", event.Action)
+		broadcastToAll(response)
+	}
+}
+
+func broadcastToAll(response WsJSONResponse) {
+
+	for client := range clients {
+		err := client.WriteJSON(response)
+
+		if err != nil {
+			log.Println("websocket err")
+			_ = client.Close()
+			delete(clients, client)
+		}
+	}
+
 }
 
 func renderPage(w http.ResponseWriter, template string, data jet.VarMap) error {
