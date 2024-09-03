@@ -91,6 +91,7 @@ func WsEndpoint(w http.ResponseWriter, r *http.Request) {
 	go ListenForWs(&conn)
 }
 
+// goroutine call started in WsEndpoint handler...
 func ListenForWs(conn *WebSocketConnection) {
 
 	defer func() {
@@ -102,7 +103,7 @@ func ListenForWs(conn *WebSocketConnection) {
 
 	var payload WsJSONPayload
 
-	// shorthand for infinite loop (anytime we get a request with a payload (JSON Post or JSON file from JS client))
+	// shorthand for infinite loop (ANYTIME we get a request with a payload (JSON Post or JSON file from JS client))
 	for {
 		err := conn.ReadJSON(&payload)
 
@@ -116,11 +117,12 @@ func ListenForWs(conn *WebSocketConnection) {
 	}
 }
 
+// goroutine call started in main.go...
 func ListenToWsChannel() {
 	var response WsJSONResponse
 
 	for {
-		// wsChan (channel) has been updated with payload data...
+		// wsChan (channel) has been updated with payload data from ListenForWs (`wsChan <- payload`)
 		event := <- wsChan
 
 		// dynamically handled data from client actions...
