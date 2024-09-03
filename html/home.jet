@@ -96,7 +96,9 @@
 
         socket.onmessage = (msg) => {
             // msg should be JSON from the server...
-            console.log(msg);
+            console.dir(msg);
+            const j = JSON.parse(msg.data);
+            console.log(j);
         }
     });
 
